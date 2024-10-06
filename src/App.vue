@@ -3,16 +3,16 @@
   <div class="game-container">
     <GameFigure />
 
-    <GameWrongLetters :wrongletters="wrongletters"/>
+    <GameWrongLetters :wrongletters="wrongletters" />
 
-    <GameWord :word="word" :correctletters="correctletters"/>
+    <GameWord :word="word" :correctletters="correctletters" />
   </div>
 
   <!-- Container for final message -->
   <GamePopup v-if="false" />
 
   <!-- Notification -->
-  <GameNotification />
+  <GameNotification ref="notification" />
 </template>
 
 <script setup lang="ts">
@@ -29,8 +29,16 @@ const word = ref('василий')
 const letters = ref<string[]>([])
 const correctletters = computed(() => letters.value.filter(letter => word.value.includes(letter)))
 const wrongletters = computed(() => letters.value.filter(letter => !word.value.includes(letter)))
+const notification = ref<InstanceType<typeof GameNotification> | null>(null)
 
 window.addEventListener('keydown', ({ key }) => {
+  if (letters.value.includes(key)) {
+    notification.value?.open()
+    setTimeout(() => {
+      notification.value?.close()
+    }, 2000);
+    return
+  }
   if (/[а-яА-ЯёЁ]/.test(key)) {
     letters.value.push(key.toLowerCase())
   }
