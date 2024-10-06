@@ -6,7 +6,7 @@
 
 Данные получаем с api.randomdatatools.ru
 
-<img src="./readme_assets/game.png" width="100%">
+<img src="./readme_assets/game.png">
 
 На главной странице четыре раздела:
 1. Заголовок
