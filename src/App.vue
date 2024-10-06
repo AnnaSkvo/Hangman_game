@@ -9,7 +9,7 @@
   </div>
 
   <!-- Container for final message -->
-  <GamePopup ref="popup" :word="word" @restart="restart"/>
+  <GamePopup ref="popup" :word="word" @restart="restart" />
 
   <!-- Notification -->
   <GameNotification ref="notification" />
@@ -24,16 +24,29 @@ import GamePopup from './components/GamePopup.vue'
 import GameNotification from './components/GameNotification.vue'
 
 import { ref, computed, watch } from 'vue'
+import axios from 'axios'
 
-const word = ref('василий')
+const word = ref('')
+const getRandomWord = async () => {
+  try {
+    const { data } = await axios<{ FirstName: string }>('https://api.randomdatatools.ru/?unescaped=false&params=FirstName')
+    word.value = data.FirstName.toLowerCase()
+  } catch (err) {
+    console.log("error: ", err)
+    word.value = ''
+  }
+}
+
+getRandomWord()
+
 const letters = ref<string[]>([])
 const correctletters = computed(() => letters.value.filter(letter => word.value.includes(letter)))
 const wrongletters = computed(() => letters.value.filter(letter => !word.value.includes(letter)))
 const notification = ref<InstanceType<typeof GameNotification> | null>(null)
 const popup = ref<InstanceType<typeof GamePopup> | null>(null)
 
-  const isLose = computed(() => wrongletters.value.length === 6)
-  const isWin = computed(() => [...word.value].every(x => correctletters.value.includes(x)))
+const isLose = computed(() => wrongletters.value.length === 6)
+const isWin = computed(() => [...word.value].every(x => correctletters.value.includes(x)))
 
 watch(wrongletters, () => {
   if (isLose.value) {
@@ -42,13 +55,13 @@ watch(wrongletters, () => {
 })
 
 watch(correctletters, () => {
-  if (isWin.value){
+  if (isWin.value) {
     popup.value?.open('win')
   }
 })
 
 window.addEventListener('keydown', ({ key }) => {
-  if (isLose.value || isWin.value){
+  if (isLose.value || isWin.value) {
     return
   }
   if (letters.value.includes(key)) {
@@ -63,7 +76,8 @@ window.addEventListener('keydown', ({ key }) => {
   }
 })
 
-const restart  = () => {
+const restart = async () => {
+  await getRandomWord()
   letters.value = []
   popup.value?.close()
 }
