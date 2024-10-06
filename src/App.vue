@@ -22,15 +22,15 @@ import GameWrongLetters from './components/GameWrongLetters.vue'
 import GameWord from './components/GameWord.vue'
 import GamePopup from './components/GamePopup.vue'
 import GameNotification from './components/GameNotification.vue'
+import { getRandomName } from './api/getRandomName'
 
 import { ref, computed, watch } from 'vue'
-import axios from 'axios'
 
 const word = ref('')
 const getRandomWord = async () => {
   try {
-    const { data } = await axios<{ FirstName: string }>('https://api.randomdatatools.ru/?unescaped=false&params=FirstName')
-    word.value = data.FirstName.toLowerCase()
+    const name = await getRandomName()
+    word.value = name.toLowerCase()
   } catch (err) {
     console.log("error: ", err)
     word.value = ''
