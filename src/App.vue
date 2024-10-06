@@ -3,7 +3,7 @@
   <div class="game-container">
     <GameFigure />
 
-    <GameWrongLetters />
+    <GameWrongLetters :wrongletters="wrongletters"/>
 
     <GameWord :word="word" :correctletters="correctletters"/>
   </div>
@@ -28,6 +28,7 @@ import { ref, computed } from 'vue'
 const word = ref('василий')
 const letters = ref<string[]>([])
 const correctletters = computed(() => letters.value.filter(letter => word.value.includes(letter)))
+const wrongletters = computed(() => letters.value.filter(letter => !word.value.includes(letter)))
 
 window.addEventListener('keydown', ({ key }) => {
   if (/[а-яА-ЯёЁ]/.test(key)) {
